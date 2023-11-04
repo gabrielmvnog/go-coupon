@@ -1,14 +1,16 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 
 	pb "github.com/gabrielmvnog/go-coupon/customer/proto"
+	customer "github.com/gabrielmvnog/go-coupon/customer/src/customer"
 	"google.golang.org/grpc"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var (
@@ -16,32 +18,33 @@ var (
 	port = flag.Int("port", 9000, "Server port")
 )
 
-type customerServer struct {
-	pb.UnimplementedCustomerServiceServer
-}
-
-func (s *customerServer) CreateCustomer(ctx context.Context, in *pb.Customer) (*pb.CustomerIdentifier, error) {
-	log.Printf("Receive: %v", in.GetPhone())
-	return &pb.CustomerIdentifier{}, nil
-}
-
-func (s *customerServer) GetCustomer(ctx context.Context, in *pb.CustomerIdentifier) (*pb.CustomerResponse, error) {
-	log.Printf("Receive: %v", in.GetId())
-	return &pb.CustomerResponse{}, nil
-}
-
 func main() {
 	flag.Parse()
+
+	db := initDb()
+
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *host, *port))
 	if err != nil {
 		log.Fatalf("failad to listen: %v", err)
 	}
 
 	server := grpc.NewServer()
-	pb.RegisterCustomerServiceServer(server, &customerServer{})
+
+	customerServiceServer := customer.NewCustomerServiceServer(db)
+	pb.RegisterCustomerServiceServer(server, customerServiceServer)
 
 	log.Printf("server listening at %v", lis.Addr())
 	if err := server.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
+}
+
+func initDb() *gorm.DB {
+	dsn := "postgres://customer:customer@0.0.0.0:5432/customer"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect database: %v", err)
+	}
+
+	return db
 }
