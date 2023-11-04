@@ -17,14 +17,14 @@ func NewCustomerRepository(db *gorm.DB) *CustomerRepository {
 }
 
 func (r CustomerRepository) CreateCustomer(ctx context.Context, customer *Customer) (*Customer, error) {
-	r.db.Create(customer)
+	result := r.db.Create(customer)
 
-	return customer, nil
+	return customer, result.Error
 }
 
 func (r CustomerRepository) GetCustomerById(ctx context.Context, customer_id uint32) (*Customer, error) {
 	var customer Customer
-	r.db.First(&customer, customer_id)
+	result := r.db.First(&customer, customer_id)
 
-	return &customer, nil
+	return &customer, result.Error
 }
