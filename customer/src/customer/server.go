@@ -19,15 +19,23 @@ func NewCustomerServiceServer(db *gorm.DB) *CustomerServiceServer {
 	return &CustomerServiceServer{usecase: *usecase}
 }
 
-func (s *CustomerServiceServer) CreateCustomer(ctx context.Context, in *pb.Customer) (*pb.CustomerIdentifier, error) {
-	return &pb.CustomerIdentifier{}, nil
+func (s *CustomerServiceServer) CreateCustomer(ctx context.Context, in *pb.CreateCustomerRequest) (*pb.CreateCustomerResponse, error) {
+	customer := s.usecase.CreateCustomer(ctx, Customer{
+		FirstName: in.FirstName,
+		LastName:  in.LastName,
+		Email:     in.Email,
+		Phone:     in.Phone,
+	})
+
+	return &pb.CreateCustomerResponse{
+		Id: customer.ID,
+	}, nil
 }
 
-func (s *CustomerServiceServer) GetCustomer(ctx context.Context, in *pb.CustomerIdentifier) (*pb.CustomerResponse, error) {
-	customer := s.usecase.GetCustomerById(ctx, 1)
+func (s *CustomerServiceServer) GetCustomer(ctx context.Context, in *pb.GetCustomerRequest) (*pb.GetCustomerResponse, error) {
+	customer := s.usecase.GetCustomerById(ctx, in.Id)
 
-	return &pb.CustomerResponse{
-		// id:        customer.ID,
+	return &pb.GetCustomerResponse{
 		FirstName: customer.FirstName,
 		LastName:  customer.LastName,
 		Email:     customer.Email,

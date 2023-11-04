@@ -4,24 +4,28 @@ option go_package = "github.com/gabrielmvnog/go-coupon/customer";
 
 service CustomerService {
 
-    rpc CreateCustomer(Customer) returns (CustomerIdentifier) {}
+    rpc CreateCustomer(CreateCustomerRequest) returns (CreateCustomerResponse) {}
 
-    rpc GetCustomer(CustomerIdentifier) returns (CustomerResponse) {}
+    rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse) {}
 };
 
-message Customer {
+message CreateCustomerRequest {
     string first_name = 1;
     string last_name = 2;
     string email = 3;
     string phone = 4;
 }
 
-message CustomerIdentifier {
-    string id = 1;
+message CreateCustomerResponse {
+    uint32 id = 1;
 }
 
-message CustomerResponse {
-    string id = 1;
+message GetCustomerRequest {
+    uint32 id = 1;
+}
+
+message GetCustomerResponse {
+    uint32 id = 1;
     string first_name = 2;
     string last_name = 3;
     string email = 4;
