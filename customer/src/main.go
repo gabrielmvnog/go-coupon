@@ -7,10 +7,9 @@ import (
 	"net"
 
 	pb "github.com/gabrielmvnog/go-coupon/customer/proto"
-	customer "github.com/gabrielmvnog/go-coupon/customer/src/customer"
+	db "github.com/gabrielmvnog/go-coupon/customer/src/db"
+	"github.com/gabrielmvnog/go-coupon/customer/src/servers"
 	"google.golang.org/grpc"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 var (
@@ -21,7 +20,7 @@ var (
 func main() {
 	flag.Parse()
 
-	db := initDb()
+	db := db.InitDB()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *host, *port))
 	if err != nil {
@@ -30,22 +29,11 @@ func main() {
 
 	server := grpc.NewServer()
 
-	customerServiceServer := customer.NewCustomerServiceServer(db)
+	customerServiceServer := servers.NewCustomerServiceServer(db)
 	pb.RegisterCustomerServiceServer(server, customerServiceServer)
 
 	log.Printf("server listening at %v", lis.Addr())
 	if err := server.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
-}
-
-func initDb() *gorm.DB {
-	dsn := "postgres://customer:customer@0.0.0.0:5432/customer"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	db.AutoMigrate(customer.Customer{})
-	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
-	}
-
-	return db
 }

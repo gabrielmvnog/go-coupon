@@ -1,26 +1,28 @@
-package customer
+package servers
 
 import (
 	"context"
 
 	pb "github.com/gabrielmvnog/go-coupon/customer/proto"
+	"github.com/gabrielmvnog/go-coupon/customer/src/models"
+	"github.com/gabrielmvnog/go-coupon/customer/src/usecases"
 	"gorm.io/gorm"
 )
 
 type CustomerServiceServer struct {
 	pb.UnimplementedCustomerServiceServer
 
-	usecase CustomerUseCase
+	usecase usecases.CustomerUseCase
 }
 
 func NewCustomerServiceServer(db *gorm.DB) *CustomerServiceServer {
-	usecase := NewCustomerUseCase(db)
+	usecase := usecases.NewCustomerUseCase(db)
 
 	return &CustomerServiceServer{usecase: *usecase}
 }
 
 func (s *CustomerServiceServer) CreateCustomer(ctx context.Context, in *pb.CreateCustomerRequest) (*pb.CreateCustomerResponse, error) {
-	customer := s.usecase.CreateCustomer(ctx, Customer{
+	customer := s.usecase.CreateCustomer(ctx, models.Customer{
 		FirstName: in.FirstName,
 		LastName:  in.LastName,
 		Email:     in.Email,

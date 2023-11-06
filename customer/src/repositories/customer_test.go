@@ -1,4 +1,4 @@
-package customer
+package repositories
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gabrielmvnog/go-coupon/customer/src/models"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"gorm.io/driver/postgres"
@@ -63,7 +64,7 @@ func TestCreateCustomer(t *testing.T) {
 	).WithArgs("", "", "", "", AnyTime{}, AnyTime{}).WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("1"))
 	mock.ExpectCommit()
 
-	customer, err := customerRepo.CreateCustomer(context.Background(), &Customer{})
+	customer, err := customerRepo.CreateCustomer(context.Background(), &models.Customer{})
 
 	assert.Equal(t, uint32(1), customer.ID, "Customer should have id in return")
 	assert.Equal(t, nil, err)
