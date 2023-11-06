@@ -7,23 +7,28 @@ import (
 	"gorm.io/gorm"
 )
 
-type CustomerRepository struct {
+type CustomerRepository interface {
+	CreateCustomer(ctx context.Context, customer *models.Customer) (*models.Customer, error)
+	GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error)
+}
+
+type customerRepository struct {
 	db *gorm.DB
 }
 
-func NewCustomerRepository(db *gorm.DB) *CustomerRepository {
-	return &CustomerRepository{
+func NewCustomerRepository(db *gorm.DB) *customerRepository {
+	return &customerRepository{
 		db: db,
 	}
 }
 
-func (r CustomerRepository) CreateCustomer(ctx context.Context, customer *models.Customer) (*models.Customer, error) {
+func (r customerRepository) CreateCustomer(ctx context.Context, customer *models.Customer) (*models.Customer, error) {
 	result := r.db.Create(customer)
 
 	return customer, result.Error
 }
 
-func (r CustomerRepository) GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error) {
+func (r customerRepository) GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error) {
 	var customer models.Customer
 	result := r.db.First(&customer, customer_id)
 

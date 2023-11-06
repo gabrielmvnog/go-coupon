@@ -1,4 +1,4 @@
-package repositories
+package repositories_test
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gabrielmvnog/go-coupon/customer/src/models"
+	"github.com/gabrielmvnog/go-coupon/customer/src/repositories"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"gorm.io/driver/postgres"
@@ -32,7 +33,7 @@ func TestGetCustomerById(t *testing.T) {
 		DriverName: "postgres",
 	})
 	db, _ := gorm.Open(dialector, &gorm.Config{})
-	customerRepo := NewCustomerRepository(db)
+	customerRepo := repositories.NewCustomerRepository(db)
 
 	mock.ExpectQuery(
 		regexp.QuoteMeta(`SELECT * FROM "customers" WHERE "customers"."id" = $1 ORDER BY "customers"."id" LIMIT 1`),
@@ -56,7 +57,7 @@ func TestCreateCustomer(t *testing.T) {
 		DriverName: "postgres",
 	})
 	db, _ := gorm.Open(dialector, &gorm.Config{})
-	customerRepo := NewCustomerRepository(db)
+	customerRepo := repositories.NewCustomerRepository(db)
 
 	mock.ExpectBegin()
 	mock.ExpectQuery(

@@ -5,6 +5,7 @@ import (
 
 	pb "github.com/gabrielmvnog/go-coupon/customer/proto"
 	"github.com/gabrielmvnog/go-coupon/customer/src/models"
+	"github.com/gabrielmvnog/go-coupon/customer/src/repositories"
 	"github.com/gabrielmvnog/go-coupon/customer/src/usecases"
 	"gorm.io/gorm"
 )
@@ -16,9 +17,10 @@ type CustomerServiceServer struct {
 }
 
 func NewCustomerServiceServer(db *gorm.DB) *CustomerServiceServer {
-	usecase := usecases.NewCustomerUseCase(db)
+	repository := repositories.NewCustomerRepository(db)
+	usecase := usecases.NewCustomerUseCase(repository)
 
-	return &CustomerServiceServer{usecase: *usecase}
+	return &CustomerServiceServer{usecase: usecase}
 }
 
 func (s *CustomerServiceServer) CreateCustomer(ctx context.Context, in *pb.CreateCustomerRequest) (*pb.CreateCustomerResponse, error) {
