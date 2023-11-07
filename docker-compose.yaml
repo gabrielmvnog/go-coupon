@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+  customer_service:
+    build: customer/
+    ports:
+      - 9000:9000
+
+  shared_db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: customer
+      POSTGRES_USER: customer
+      POSTGRES_DB: customers
+    ports:
+      - 5432:5432
