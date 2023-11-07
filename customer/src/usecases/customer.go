@@ -10,7 +10,7 @@ import (
 
 type CustomerUseCase interface {
 	CreateCustomer(ctx context.Context, customer models.Customer) *models.Customer
-	GetCustomerById(ctx context.Context, customer_id uint32) *models.Customer
+	GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error)
 	UpdateCustomer(ctx context.Context, customer models.Customer) *models.Customer
 }
 
@@ -32,11 +32,11 @@ func (u *customerUseCase) CreateCustomer(ctx context.Context, customer models.Cu
 	return &customer
 }
 
-func (u *customerUseCase) GetCustomerById(ctx context.Context, customer_id uint32) *models.Customer {
+func (u *customerUseCase) GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error) {
 	log.Printf("Getting user: %d", customer_id)
-	customer, _ := u.repository.GetCustomerById(ctx, customer_id)
+	customer, err := u.repository.GetCustomerById(ctx, customer_id)
 
-	return customer
+	return customer, err
 }
 
 func (u *customerUseCase) UpdateCustomer(ctx context.Context, customer models.Customer) *models.Customer {

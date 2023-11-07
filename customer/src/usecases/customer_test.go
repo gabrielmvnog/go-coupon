@@ -20,6 +20,16 @@ func TestCreateCustomer(t *testing.T) {
 	repository.AssertExpectations(t)
 }
 
+func TestGetCustomerById(t *testing.T) {
+	repository := new(mocks.CustomerRepository)
+
+	repository.On("GetCustomerById", mock.Anything).Return(models.Customer{}, nil)
+
+	usecases.NewCustomerUseCase(repository).GetCustomerById(context.Background(), 123)
+
+	repository.AssertExpectations(t)
+}
+
 func TestUpdateCustomer(t *testing.T) {
 	repository := new(mocks.CustomerRepository)
 	customer := models.Customer{ID: 1}

@@ -7,6 +7,9 @@ import (
 	"github.com/gabrielmvnog/go-coupon/customer/src/repositories"
 	pb "github.com/gabrielmvnog/go-coupon/customer/src/servers/proto"
 	"github.com/gabrielmvnog/go-coupon/customer/src/usecases"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"gorm.io/gorm"
 )
 
@@ -37,7 +40,11 @@ func (s *CustomerServiceServer) CreateCustomer(ctx context.Context, in *pb.Creat
 }
 
 func (s *CustomerServiceServer) GetCustomer(ctx context.Context, in *pb.GetCustomerRequest) (*pb.GetCustomerResponse, error) {
-	customer := s.usecase.GetCustomerById(ctx, in.Id)
+	customer, err := s.usecase.GetCustomerById(ctx, in.Id)
+
+	if err.Error() == "record not found" {
+		return nil, status.Errorf(codes.NotFound, "user not found")
+	}
 
 	return &pb.GetCustomerResponse{
 		FirstName: customer.FirstName,
