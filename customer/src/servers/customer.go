@@ -3,9 +3,9 @@ package servers
 import (
 	"context"
 
-	pb "github.com/gabrielmvnog/go-coupon/customer/proto"
 	"github.com/gabrielmvnog/go-coupon/customer/src/models"
 	"github.com/gabrielmvnog/go-coupon/customer/src/repositories"
+	pb "github.com/gabrielmvnog/go-coupon/customer/src/servers/proto"
 	"github.com/gabrielmvnog/go-coupon/customer/src/usecases"
 	"gorm.io/gorm"
 )
@@ -40,6 +40,24 @@ func (s *CustomerServiceServer) GetCustomer(ctx context.Context, in *pb.GetCusto
 	customer := s.usecase.GetCustomerById(ctx, in.Id)
 
 	return &pb.GetCustomerResponse{
+		FirstName: customer.FirstName,
+		LastName:  customer.LastName,
+		Email:     customer.Email,
+		Phone:     customer.Phone,
+	}, nil
+}
+
+func (s *CustomerServiceServer) UpdateCustomer(ctx context.Context, in *pb.UpdateCustomerRequest) (*pb.UpdateCustomerResponse, error) {
+	customer := s.usecase.UpdateCustomer(ctx, models.Customer{
+		ID:        in.Id,
+		FirstName: in.FirstName,
+		LastName:  in.LastName,
+		Email:     in.Email,
+		Phone:     in.Phone,
+	})
+
+	return &pb.UpdateCustomerResponse{
+		Id:        customer.ID,
 		FirstName: customer.FirstName,
 		LastName:  customer.LastName,
 		Email:     customer.Email,

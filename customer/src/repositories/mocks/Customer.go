@@ -24,3 +24,9 @@ func (_m *CustomerRepository) GetCustomerById(ctx context.Context, customer_id u
 
 	return &customer, args.Error(1)
 }
+
+func (_m *CustomerRepository) UpdateCustomer(ctx context.Context, customer_id uint32, customer *models.Customer) (*models.Customer, error) {
+	args := _m.Called(customer)
+
+	return customer, args.Error(1)
+}

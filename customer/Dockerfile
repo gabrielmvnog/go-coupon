@@ -6,7 +6,6 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY src/ ./src
-COPY proto/ ./proto
 
 RUN go build src/main.go
 

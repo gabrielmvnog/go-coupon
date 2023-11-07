@@ -6,9 +6,9 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/gabrielmvnog/go-coupon/customer/proto"
 	db "github.com/gabrielmvnog/go-coupon/customer/src/db"
 	"github.com/gabrielmvnog/go-coupon/customer/src/servers"
+	pb "github.com/gabrielmvnog/go-coupon/customer/src/servers/proto"
 	"google.golang.org/grpc"
 )
 

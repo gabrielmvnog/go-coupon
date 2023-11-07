@@ -7,6 +7,8 @@ service CustomerService {
     rpc CreateCustomer(CreateCustomerRequest) returns (CreateCustomerResponse) {}
 
     rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse) {}
+
+    rpc UpdateCustomer(UpdateCustomerRequest) returns (UpdateCustomerResponse) {}
 };
 
 message CreateCustomerRequest {
@@ -18,6 +20,22 @@ message CreateCustomerRequest {
 
 message CreateCustomerResponse {
     uint32 id = 1;
+}
+
+message UpdateCustomerRequest {
+    uint32 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string phone = 5;
+}
+
+message UpdateCustomerResponse {
+    uint32 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string phone = 5;
 }
 
 message GetCustomerRequest {
