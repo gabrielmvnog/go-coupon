@@ -5,13 +5,19 @@ services:
     build: customer/
     ports:
       - 9000:9000
+    environment:
+      - DB_USER=shared
+      - DB_PASSWORD=shared
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=shared
 
-  shared_db:
+  db:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: customer
-      POSTGRES_USER: customer
-      POSTGRES_DB: customers
+      POSTGRES_PASSWORD: shared
+      POSTGRES_USER: shared
+      POSTGRES_DB: shared
     ports:
       - 5432:5432
