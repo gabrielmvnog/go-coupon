@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v3.12.4
-// source: customer.proto
+// source: src/servers/proto/customer.proto
 
 package customer
 
@@ -22,6 +22,7 @@ const (
 	CustomerService_CreateCustomer_FullMethodName = "/CustomerService/CreateCustomer"
 	CustomerService_GetCustomer_FullMethodName    = "/CustomerService/GetCustomer"
 	CustomerService_UpdateCustomer_FullMethodName = "/CustomerService/UpdateCustomer"
+	CustomerService_DeleteCustomer_FullMethodName = "/CustomerService/DeleteCustomer"
 )
 
 // CustomerServiceClient is the client API for CustomerService service.
@@ -31,6 +32,7 @@ type CustomerServiceClient interface {
 	CreateCustomer(ctx context.Context, in *CreateCustomerRequest, opts ...grpc.CallOption) (*CreateCustomerResponse, error)
 	GetCustomer(ctx context.Context, in *GetCustomerRequest, opts ...grpc.CallOption) (*GetCustomerResponse, error)
 	UpdateCustomer(ctx context.Context, in *UpdateCustomerRequest, opts ...grpc.CallOption) (*UpdateCustomerResponse, error)
+	DeleteCustomer(ctx context.Context, in *DeleteCustomerRequest, opts ...grpc.CallOption) (*DeleteCustomerResponse, error)
 }
 
 type customerServiceClient struct {
@@ -68,6 +70,15 @@ func (c *customerServiceClient) UpdateCustomer(ctx context.Context, in *UpdateCu
 	return out, nil
 }
 
+func (c *customerServiceClient) DeleteCustomer(ctx context.Context, in *DeleteCustomerRequest, opts ...grpc.CallOption) (*DeleteCustomerResponse, error) {
+	out := new(DeleteCustomerResponse)
+	err := c.cc.Invoke(ctx, CustomerService_DeleteCustomer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CustomerServiceServer is the server API for CustomerService service.
 // All implementations must embed UnimplementedCustomerServiceServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type CustomerServiceServer interface {
 	CreateCustomer(context.Context, *CreateCustomerRequest) (*CreateCustomerResponse, error)
 	GetCustomer(context.Context, *GetCustomerRequest) (*GetCustomerResponse, error)
 	UpdateCustomer(context.Context, *UpdateCustomerRequest) (*UpdateCustomerResponse, error)
+	DeleteCustomer(context.Context, *DeleteCustomerRequest) (*DeleteCustomerResponse, error)
 	mustEmbedUnimplementedCustomerServiceServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedCustomerServiceServer) GetCustomer(context.Context, *GetCusto
 }
 func (UnimplementedCustomerServiceServer) UpdateCustomer(context.Context, *UpdateCustomerRequest) (*UpdateCustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCustomer not implemented")
+}
+func (UnimplementedCustomerServiceServer) DeleteCustomer(context.Context, *DeleteCustomerRequest) (*DeleteCustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCustomer not implemented")
 }
 func (UnimplementedCustomerServiceServer) mustEmbedUnimplementedCustomerServiceServer() {}
 
@@ -158,6 +173,24 @@ func _CustomerService_UpdateCustomer_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CustomerService_DeleteCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCustomerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomerServiceServer).DeleteCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CustomerService_DeleteCustomer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomerServiceServer).DeleteCustomer(ctx, req.(*DeleteCustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CustomerService_ServiceDesc is the grpc.ServiceDesc for CustomerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -177,7 +210,11 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "UpdateCustomer",
 			Handler:    _CustomerService_UpdateCustomer_Handler,
 		},
+		{
+			MethodName: "DeleteCustomer",
+			Handler:    _CustomerService_DeleteCustomer_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "customer.proto",
+	Metadata: "src/servers/proto/customer.proto",
 }

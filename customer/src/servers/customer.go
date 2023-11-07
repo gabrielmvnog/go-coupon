@@ -42,7 +42,7 @@ func (s *CustomerServiceServer) CreateCustomer(ctx context.Context, in *pb.Creat
 func (s *CustomerServiceServer) GetCustomer(ctx context.Context, in *pb.GetCustomerRequest) (*pb.GetCustomerResponse, error) {
 	customer, err := s.usecase.GetCustomerById(ctx, in.Id)
 
-	if err.Error() == "record not found" {
+	if err == gorm.ErrRecordNotFound {
 		return nil, status.Errorf(codes.NotFound, "user not found")
 	}
 
@@ -52,6 +52,12 @@ func (s *CustomerServiceServer) GetCustomer(ctx context.Context, in *pb.GetCusto
 		Email:     customer.Email,
 		Phone:     customer.Phone,
 	}, nil
+}
+
+func (s *CustomerServiceServer) DeleteCustomer(ctx context.Context, in *pb.DeleteCustomerRequest) (*pb.DeleteCustomerResponse, error) {
+	s.usecase.DeleteCustomer(ctx, in.Id)
+
+	return &pb.DeleteCustomerResponse{}, nil
 }
 
 func (s *CustomerServiceServer) UpdateCustomer(ctx context.Context, in *pb.UpdateCustomerRequest) (*pb.UpdateCustomerResponse, error) {

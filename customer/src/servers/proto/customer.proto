@@ -9,6 +9,8 @@ service CustomerService {
     rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse) {}
 
     rpc UpdateCustomer(UpdateCustomerRequest) returns (UpdateCustomerResponse) {}
+
+    rpc DeleteCustomer(DeleteCustomerRequest) returns (DeleteCustomerResponse) {}
 };
 
 message CreateCustomerRequest {
@@ -48,4 +50,12 @@ message GetCustomerResponse {
     string last_name = 3;
     string email = 4;
     string phone = 5;
+}
+
+message DeleteCustomerRequest {
+    uint32 id = 1;
+}
+
+message DeleteCustomerResponse {
+
 }

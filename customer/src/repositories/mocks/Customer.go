@@ -30,3 +30,9 @@ func (_m *CustomerRepository) UpdateCustomer(ctx context.Context, customer_id ui
 
 	return customer, args.Error(1)
 }
+
+func (_m *CustomerRepository) DeleteCustomer(ctx context.Context, customer_id uint32) error {
+	args := _m.Called(customer_id)
+
+	return args.Error(1)
+}

@@ -11,6 +11,7 @@ type CustomerRepository interface {
 	CreateCustomer(ctx context.Context, customer *models.Customer) (*models.Customer, error)
 	GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error)
 	UpdateCustomer(ctx context.Context, customer_id uint32, customer *models.Customer) (*models.Customer, error)
+	DeleteCustomer(ctx context.Context, customer_id uint32) error
 }
 
 type customerRepository struct {
@@ -40,4 +41,10 @@ func (r customerRepository) UpdateCustomer(ctx context.Context, customer_id uint
 	result := r.db.Model(models.Customer{}).Where("id = ?", customer_id).Updates(customer)
 
 	return customer, result.Error
+}
+
+func (r customerRepository) DeleteCustomer(ctx context.Context, customer_id uint32) error {
+	result := r.db.Delete(models.Customer{}, customer_id)
+
+	return result.Error
 }

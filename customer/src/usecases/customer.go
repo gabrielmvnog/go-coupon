@@ -12,6 +12,7 @@ type CustomerUseCase interface {
 	CreateCustomer(ctx context.Context, customer models.Customer) *models.Customer
 	GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error)
 	UpdateCustomer(ctx context.Context, customer models.Customer) *models.Customer
+	DeleteCustomer(ctx context.Context, customer_id uint32) error
 }
 
 type customerUseCase struct {
@@ -45,4 +46,12 @@ func (u *customerUseCase) UpdateCustomer(ctx context.Context, customer models.Cu
 	u.repository.UpdateCustomer(ctx, customer.ID, &customer)
 
 	return &customer
+}
+
+func (u *customerUseCase) DeleteCustomer(ctx context.Context, customer_id uint32) error {
+	log.Printf("Deleting user: %d", customer_id)
+
+	err := u.repository.DeleteCustomer(ctx, customer_id)
+
+	return err
 }

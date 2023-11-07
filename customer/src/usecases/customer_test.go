@@ -40,3 +40,13 @@ func TestUpdateCustomer(t *testing.T) {
 
 	repository.AssertExpectations(t)
 }
+
+func TestDeleteCustomer(t *testing.T) {
+	repository := new(mocks.CustomerRepository)
+
+	repository.On("DeleteCustomer", mock.Anything).Return(nil, nil)
+
+	usecases.NewCustomerUseCase(repository).DeleteCustomer(context.Background(), 123)
+
+	repository.AssertExpectations(t)
+}
