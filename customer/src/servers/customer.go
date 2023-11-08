@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/gabrielmvnog/go-coupon/customer/src/models"
-	"github.com/gabrielmvnog/go-coupon/customer/src/repositories"
 	pb "github.com/gabrielmvnog/go-coupon/customer/src/servers/proto"
 	"github.com/gabrielmvnog/go-coupon/customer/src/usecases"
 	"google.golang.org/grpc/codes"
@@ -19,20 +18,18 @@ type CustomerServiceServer struct {
 	usecase usecases.CustomerUseCase
 }
 
-func NewCustomerServiceServer(db *gorm.DB) *CustomerServiceServer {
-	repository := repositories.NewCustomerRepository(db)
-	usecase := usecases.NewCustomerUseCase(repository)
-
+func NewCustomerServiceServer(usecase usecases.CustomerUseCase) *CustomerServiceServer {
 	return &CustomerServiceServer{usecase: usecase}
 }
 
 func (s *CustomerServiceServer) CreateCustomer(ctx context.Context, in *pb.CreateCustomerRequest) (*pb.CreateCustomerResponse, error) {
-	customer, _ := s.usecase.CreateCustomer(ctx, models.Customer{
+	body := models.Customer{
 		FirstName: in.FirstName,
 		LastName:  in.LastName,
 		Email:     in.Email,
 		Phone:     in.Phone,
-	})
+	}
+	customer := s.usecase.CreateCustomer(ctx, &body)
 
 	return &pb.CreateCustomerResponse{
 		Id: customer.ID,
@@ -61,13 +58,14 @@ func (s *CustomerServiceServer) DeleteCustomer(ctx context.Context, in *pb.Delet
 }
 
 func (s *CustomerServiceServer) UpdateCustomer(ctx context.Context, in *pb.UpdateCustomerRequest) (*pb.UpdateCustomerResponse, error) {
-	customer := s.usecase.UpdateCustomer(ctx, models.Customer{
+	body := models.Customer{
 		ID:        in.Id,
 		FirstName: in.FirstName,
 		LastName:  in.LastName,
 		Email:     in.Email,
 		Phone:     in.Phone,
-	})
+	}
+	customer := s.usecase.UpdateCustomer(ctx, &body)
 
 	return &pb.UpdateCustomerResponse{
 		Id:        customer.ID,

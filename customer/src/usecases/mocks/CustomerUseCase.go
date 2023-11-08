@@ -15,11 +15,11 @@ type CustomerUseCase struct {
 }
 
 // CreateCustomer provides a mock function with given fields: ctx, customer
-func (_m *CustomerUseCase) CreateCustomer(ctx context.Context, customer models.Customer) *models.Customer {
+func (_m *CustomerUseCase) CreateCustomer(ctx context.Context, customer *models.Customer) *models.Customer {
 	ret := _m.Called(ctx, customer)
 
 	var r0 *models.Customer
-	if rf, ok := ret.Get(0).(func(context.Context, models.Customer) *models.Customer); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *models.Customer) *models.Customer); ok {
 		r0 = rf(ctx, customer)
 	} else {
 		if ret.Get(0) != nil {
@@ -71,11 +71,11 @@ func (_m *CustomerUseCase) GetCustomerById(ctx context.Context, customer_id uint
 }
 
 // UpdateCustomer provides a mock function with given fields: ctx, customer
-func (_m *CustomerUseCase) UpdateCustomer(ctx context.Context, customer models.Customer) *models.Customer {
+func (_m *CustomerUseCase) UpdateCustomer(ctx context.Context, customer *models.Customer) *models.Customer {
 	ret := _m.Called(ctx, customer)
 
 	var r0 *models.Customer
-	if rf, ok := ret.Get(0).(func(context.Context, models.Customer) *models.Customer); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *models.Customer) *models.Customer); ok {
 		r0 = rf(ctx, customer)
 	} else {
 		if ret.Get(0) != nil {

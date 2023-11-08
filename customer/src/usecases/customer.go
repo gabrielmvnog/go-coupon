@@ -11,9 +11,9 @@ import (
 
 //go:generate mockery --name CustomerUseCase
 type CustomerUseCase interface {
-	CreateCustomer(ctx context.Context, customer models.Customer) (*models.Customer, error)
+	CreateCustomer(ctx context.Context, customer *models.Customer) *models.Customer
 	GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error)
-	UpdateCustomer(ctx context.Context, customer models.Customer) *models.Customer
+	UpdateCustomer(ctx context.Context, customer *models.Customer) *models.Customer
 	DeleteCustomer(ctx context.Context, customer_id uint32) error
 }
 
@@ -27,12 +27,12 @@ func NewCustomerUseCase(repository repositories.CustomerRepository) *customerUse
 	}
 }
 
-func (u *customerUseCase) CreateCustomer(ctx context.Context, customer models.Customer) (*models.Customer, error) {
+func (u *customerUseCase) CreateCustomer(ctx context.Context, customer *models.Customer) *models.Customer {
 	log.Printf("Creating user: %s", customer.FirstName)
 
-	u.repository.CreateCustomer(ctx, &customer)
+	u.repository.CreateCustomer(ctx, customer)
 
-	return &customer, nil
+	return customer
 }
 
 func (u *customerUseCase) GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error) {
@@ -46,12 +46,12 @@ func (u *customerUseCase) GetCustomerById(ctx context.Context, customer_id uint3
 	return customer, nil
 }
 
-func (u *customerUseCase) UpdateCustomer(ctx context.Context, customer models.Customer) *models.Customer {
+func (u *customerUseCase) UpdateCustomer(ctx context.Context, customer *models.Customer) *models.Customer {
 	log.Printf("Updating user: %d", customer.ID)
 
-	u.repository.UpdateCustomer(ctx, customer.ID, &customer)
+	u.repository.UpdateCustomer(ctx, customer.ID, customer)
 
-	return &customer
+	return customer
 }
 
 func (u *customerUseCase) DeleteCustomer(ctx context.Context, customer_id uint32) error {

@@ -7,8 +7,10 @@ import (
 	"net"
 
 	db "github.com/gabrielmvnog/go-coupon/customer/src/db"
+	"github.com/gabrielmvnog/go-coupon/customer/src/repositories"
 	"github.com/gabrielmvnog/go-coupon/customer/src/servers"
 	pb "github.com/gabrielmvnog/go-coupon/customer/src/servers/proto"
+	"github.com/gabrielmvnog/go-coupon/customer/src/usecases"
 	"google.golang.org/grpc"
 )
 
@@ -29,7 +31,9 @@ func main() {
 
 	server := grpc.NewServer()
 
-	customerServiceServer := servers.NewCustomerServiceServer(db)
+	customerRepository := repositories.NewCustomerRepository(db)
+	customerUsecase := usecases.NewCustomerUseCase(customerRepository)
+	customerServiceServer := servers.NewCustomerServiceServer(customerUsecase)
 	pb.RegisterCustomerServiceServer(server, customerServiceServer)
 
 	log.Printf("server listening at %v", lis.Addr())

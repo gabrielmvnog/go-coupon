@@ -20,7 +20,7 @@ func TestCreateCustomer(t *testing.T) {
 	)
 
 	u := usecases.NewCustomerUseCase(r)
-	got, _ := u.CreateCustomer(context.Background(), customer)
+	got := u.CreateCustomer(context.Background(), &customer)
 
 	assert.Equal(t, &customer, got)
 }
@@ -82,7 +82,7 @@ func TestUpdateCustomer(t *testing.T) {
 
 	r.On("UpdateCustomer", context.Background(), uint32(123), &customer).Return(&customer, nil)
 
-	usecases.NewCustomerUseCase(r).UpdateCustomer(context.Background(), customer)
+	usecases.NewCustomerUseCase(r).UpdateCustomer(context.Background(), &customer)
 
 	r.AssertExpectations(t)
 }
