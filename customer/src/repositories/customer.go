@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockery --name CustomerRepository
 type CustomerRepository interface {
 	CreateCustomer(ctx context.Context, customer *models.Customer) (*models.Customer, error)
 	GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error)

@@ -7,46 +7,91 @@ import (
 	"github.com/gabrielmvnog/go-coupon/customer/src/models"
 	"github.com/gabrielmvnog/go-coupon/customer/src/repositories/mocks"
 	"github.com/gabrielmvnog/go-coupon/customer/src/usecases"
-	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestCreateCustomer(t *testing.T) {
-	repository := new(mocks.CustomerRepository)
+	type args struct {
+		createCustomerObject models.Customer
+		createCustomerResult models.Customer
+		createCustomerError  error
+	}
+	customer := models.Customer{}
+	tests := []struct {
+		name      string
+		args      args
+		expect    models.Customer
+		expectErr error
+	}{
+		{
+			name: "should return success",
+			args: args{
+				createCustomerObject: models.Customer{},
+				createCustomerResult: customer,
+				createCustomerError:  nil,
+			},
+			expect:    customer,
+			expectErr: nil,
+		},
+		{
+			name: "should return error",
+			args: args{
+				createCustomerObject: models.Customer{},
+				createCustomerResult: customer,
+				createCustomerError:  gorm.ErrDuplicatedKey,
+			},
+			expectErr: gorm.ErrDuplicatedKey,
+		},
+	}
 
-	repository.On("CreateCustomer", mock.Anything).Return(models.Customer{}, nil)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := new(mocks.CustomerRepository)
+			r.On("CreateCustomer", context.Background(), &tt.args.createCustomerObject).Return(
+				&tt.args.createCustomerResult, tt.args.createCustomerError,
+			)
 
-	usecases.NewCustomerUseCase(repository).CreateCustomer(context.Background(), models.Customer{})
+			u := usecases.NewCustomerUseCase(r)
+			got, err := u.CreateCustomer(context.Background(), tt.args.createCustomerObject)
 
-	repository.AssertExpectations(t)
+			if err != nil {
+				assert.Equal(t, tt.expectErr, err)
+			} else {
+				assert.Equal(t, &tt.expect, got)
+			}
+		})
+
+	}
 }
 
 func TestGetCustomerById(t *testing.T) {
-	repository := new(mocks.CustomerRepository)
+	r := new(mocks.CustomerRepository)
 
-	repository.On("GetCustomerById", mock.Anything).Return(models.Customer{}, nil)
+	r.On("GetCustomerById", context.Background(), uint32(123)).Return(&models.Customer{}, nil)
 
-	usecases.NewCustomerUseCase(repository).GetCustomerById(context.Background(), 123)
+	usecases.NewCustomerUseCase(r).GetCustomerById(context.Background(), 123)
 
-	repository.AssertExpectations(t)
+	r.AssertExpectations(t)
 }
 
 func TestUpdateCustomer(t *testing.T) {
-	repository := new(mocks.CustomerRepository)
-	customer := models.Customer{ID: 1}
+	r := new(mocks.CustomerRepository)
+	customer := models.Customer{ID: uint32(123)}
 
-	repository.On("UpdateCustomer", mock.Anything).Return(customer, nil)
+	r.On("UpdateCustomer", context.Background(), uint32(123), &customer).Return(&customer, nil)
 
-	usecases.NewCustomerUseCase(repository).UpdateCustomer(context.Background(), customer)
+	usecases.NewCustomerUseCase(r).UpdateCustomer(context.Background(), customer)
 
-	repository.AssertExpectations(t)
+	r.AssertExpectations(t)
 }
 
 func TestDeleteCustomer(t *testing.T) {
-	repository := new(mocks.CustomerRepository)
+	r := new(mocks.CustomerRepository)
 
-	repository.On("DeleteCustomer", mock.Anything).Return(nil, nil)
+	r.On("DeleteCustomer", context.Background(), uint32(123)).Return(nil, nil)
 
-	usecases.NewCustomerUseCase(repository).DeleteCustomer(context.Background(), 123)
+	usecases.NewCustomerUseCase(r).DeleteCustomer(context.Background(), uint32(123))
 
-	repository.AssertExpectations(t)
+	r.AssertExpectations(t)
 }

@@ -6,10 +6,12 @@ import (
 
 	"github.com/gabrielmvnog/go-coupon/customer/src/models"
 	"github.com/gabrielmvnog/go-coupon/customer/src/repositories"
+	"gorm.io/gorm"
 )
 
+//go:generate mockery --name CustomerUseCase
 type CustomerUseCase interface {
-	CreateCustomer(ctx context.Context, customer models.Customer) *models.Customer
+	CreateCustomer(ctx context.Context, customer models.Customer) (*models.Customer, error)
 	GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error)
 	UpdateCustomer(ctx context.Context, customer models.Customer) *models.Customer
 	DeleteCustomer(ctx context.Context, customer_id uint32) error
@@ -25,12 +27,16 @@ func NewCustomerUseCase(repository repositories.CustomerRepository) *customerUse
 	}
 }
 
-func (u *customerUseCase) CreateCustomer(ctx context.Context, customer models.Customer) *models.Customer {
+func (u *customerUseCase) CreateCustomer(ctx context.Context, customer models.Customer) (*models.Customer, error) {
 	log.Printf("Creating user: %s", customer.FirstName)
 
-	u.repository.CreateCustomer(ctx, &customer)
+	_, err := u.repository.CreateCustomer(ctx, &customer)
 
-	return &customer
+	if err == gorm.ErrDuplicatedKey {
+		return nil, err
+	}
+
+	return &customer, nil
 }
 
 func (u *customerUseCase) GetCustomerById(ctx context.Context, customer_id uint32) (*models.Customer, error) {

@@ -27,7 +27,7 @@ func NewCustomerServiceServer(db *gorm.DB) *CustomerServiceServer {
 }
 
 func (s *CustomerServiceServer) CreateCustomer(ctx context.Context, in *pb.CreateCustomerRequest) (*pb.CreateCustomerResponse, error) {
-	customer := s.usecase.CreateCustomer(ctx, models.Customer{
+	customer, _ := s.usecase.CreateCustomer(ctx, models.Customer{
 		FirstName: in.FirstName,
 		LastName:  in.LastName,
 		Email:     in.Email,

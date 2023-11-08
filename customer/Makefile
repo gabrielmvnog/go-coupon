@@ -4,4 +4,7 @@ run:
 tests: 
 	go test ./...
 
-.PHONY: run tests
+genreate-mocks: 
+	go generate ./...
+
+.PHONY: run tests genreate-mocks
