@@ -30,11 +30,7 @@ func NewCustomerUseCase(repository repositories.CustomerRepository) *customerUse
 func (u *customerUseCase) CreateCustomer(ctx context.Context, customer models.Customer) (*models.Customer, error) {
 	log.Printf("Creating user: %s", customer.FirstName)
 
-	_, err := u.repository.CreateCustomer(ctx, &customer)
-
-	if err == gorm.ErrDuplicatedKey {
-		return nil, err
-	}
+	u.repository.CreateCustomer(ctx, &customer)
 
 	return &customer, nil
 }
@@ -43,7 +39,11 @@ func (u *customerUseCase) GetCustomerById(ctx context.Context, customer_id uint3
 	log.Printf("Getting user: %d", customer_id)
 	customer, err := u.repository.GetCustomerById(ctx, customer_id)
 
-	return customer, err
+	if err == gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	return customer, nil
 }
 
 func (u *customerUseCase) UpdateCustomer(ctx context.Context, customer models.Customer) *models.Customer {
